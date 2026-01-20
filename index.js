@@ -16,7 +16,14 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-let students = [];
+let students = [
+  {
+    id: 999,
+    nomComplet: "Test Doublon",
+    telephone: "0340000000",
+    option: "Journalier",
+  },
+];
 let nextId = 1;
 
 // --- SÉCURITÉ (AUTH) ---
