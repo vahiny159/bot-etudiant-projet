@@ -92,23 +92,36 @@ if (BOT_TOKEN) {
     );
   });
 
-  // -- RÉCEPTION DES DONNÉES DE LA MINI APP --
-  bot.on("web_app_data", async (ctx) => {
-    const data = JSON.parse(ctx.webAppData.data);
+  // -- RÉCEPTION DES DONNÉES (Version Robuste) --
+  // On écoute tout type de message et on filtre nous-même
+  bot.on("message", async (ctx) => {
+    // Vérification : Est-ce que ce message contient des données Web App ?
+    if (ctx.message && ctx.message.web_app_data) {
+      console.log("📥 Données reçues du Web :", ctx.message.web_app_data.data);
 
-    ctx.reply("⏳ Réception des données...");
+      try {
+        const data = JSON.parse(ctx.message.web_app_data.data);
 
-    const saved = await apiService.add(data);
+        ctx.reply("⏳ Traitement en cours...");
 
-    if (saved) {
-      const recap =
-        `✅ **Dossier Reçu et Enregistré !**\n\n` +
-        `👤 **Nom:** ${saved.nomComplet}\n` +
-        `📚 **Option:** ${saved.option}\n` +
-        `🏫 **Classe:** ${saved.departement}`;
-      await ctx.replyWithMarkdown(recap);
-    } else {
-      ctx.reply("❌ Erreur de sauvegarde.");
+        // On sauvegarde
+        const saved = await apiService.add(data);
+
+        if (saved) {
+          const recap =
+            `✅ **Dossier Enregistré !**\n\n` +
+            `👤 **Nom:** ${saved.nomComplet}\n` +
+            `📞 **Tel:** ${saved.telephone}\n` +
+            `📚 **Option:** ${saved.option}\n` +
+            `🏫 **Classe:** ${saved.departement}`;
+          return ctx.replyWithMarkdown(recap);
+        } else {
+          return ctx.reply("❌ Erreur lors de la sauvegarde API.");
+        }
+      } catch (error) {
+        console.error("Erreur lecture JSON", error);
+        return ctx.reply("❌ Erreur : Données illisibles.");
+      }
     }
   });
 
