@@ -98,22 +98,25 @@ if (BOT_TOKEN) {
 
 // --- CHECK DOUBLONS ---
 app.post("/api/check-duplicates", (req, res) => {
-  // const telegramProof = req.header('X-Telegram-Data');
-  // if (!verifyTelegramData(telegramProof)) return res.status(403).json({ success: false });
-
   const { nomComplet, telephone } = req.body;
 
-  // On cherche si un étudiant existant a le même tel OU un nom qui contient le mot clé
-  const found = students.filter(
-    (s) =>
-      (telephone && s.telephone === telephone) ||
-      (nomComplet &&
-        s.nomComplet.toLowerCase().includes(nomComplet.toLowerCase())),
-  );
+  console.log(`🔍 Vérification doublon pour : ${nomComplet} / ${telephone}`);
+
+  // LOGIQUE DE RECHERCHE (SIMULATION MÉMOIRE)
+  // Ici, on regarde dans notre tableau 'students' si quelqu'un a le même tel OU un nom proche
+  const found = students.filter((s) => {
+    const memeTel = telephone && s.telephone === telephone;
+    const memeNom =
+      nomComplet &&
+      s.nomComplet.toLowerCase().includes(nomComplet.toLowerCase());
+    return memeTel || memeNom;
+  });
 
   if (found.length > 0) {
+    console.log(`⚠️ ${found.length} doublon(s) trouvé(s) !`);
     res.json({ found: true, candidates: found });
   } else {
+    console.log("✅ Aucun doublon.");
     res.json({ found: false });
   }
 });
