@@ -348,8 +348,7 @@
       tg.setHeaderColor("#F9FAFB");
 
       // --- FONCTION CHECK DOUBLON CORRIGÉE (Ne bloque plus) ---
-      // --- VERSION DEBUG AVEC ALERTES PARTOUT ---
-      // --- FONCTION FINALE (PROPRE ET ROBUSTE) ---
+      // --- FONCTION CORRIGÉE (TIMING FIX) ---
       async function checkDuplicates() {
         const nom = document.getElementById("nomComplet").value;
         const tel = document.getElementById("telephone").value;
@@ -360,11 +359,12 @@
         if (!nom) {
           if (tg.HapticFeedback)
             tg.HapticFeedback.notificationOccurred("error");
-          tg.showAlert("Veuillez d'abord entrer un nom.");
+          // On utilise un petit délai ici aussi par sécurité
+          setTimeout(() => tg.showAlert("Veuillez d'abord entrer un nom."), 50);
           return;
         }
 
-        // 2. UI : Recherche en cours
+        // 2. UI Loading
         btnText.innerText = "Recherche...";
         btnIcon.innerText = "⏳";
 
@@ -382,42 +382,38 @@
 
           const result = await response.json();
 
-          // 3. Gestion du Résultat
+          // --- ÉTAPE CRUCIALE : ON RESET LE BOUTON MAINTENANT ---
+          // On le fait AVANT d'ouvrir les popups pour éviter les blocages
+          btnText.innerText = "Vérifier les doublons";
+          btnIcon.innerText = "🔍";
+
+          // 3. Gestion du Résultat avec TIMEOUT (La pause magique)
           if (
             result.found &&
             result.candidates &&
             result.candidates.length > 0
           ) {
-            // CAS A : Doublon trouvé -> On ouvre la belle popup
             if (tg.HapticFeedback)
               tg.HapticFeedback.notificationOccurred("warning");
             showDuplicateModal(result.candidates);
           } else {
-            // CAS B : Pas de doublon -> On affiche un message de succès
             if (tg.HapticFeedback)
               tg.HapticFeedback.notificationOccurred("success");
 
-            // SÉCURITÉ : On essaie l'alerte Telegram, sinon l'alerte classique
-            try {
+            // LA CORRECTION EST ICI :
+            // On attend 100ms pour être sûr que l'UI est stable avant d'appeler Telegram
+            setTimeout(() => {
               tg.showAlert("✅ Aucun doublon détecté. Vous pouvez continuer.");
-            } catch (e) {
-              alert("✅ Aucun doublon détecté. Vous pouvez continuer.");
-            }
+            }, 100);
           }
         } catch (error) {
           console.error(error);
+          // En cas d'erreur aussi, on reset le bouton
           btnText.innerText = "Réessayer";
-          alert("Erreur de connexion : " + error.message);
-        } finally {
-          // 4. NETTOYAGE : On remet TOUJOURS le bouton à la normale à la fin
-          // Sauf si on a trouvé un doublon (car la popup est ouverte par dessus)
-          // Mais pour être sûr que le texte revienne :
+          btnIcon.innerText = "❌";
           setTimeout(() => {
-            if (btnText.innerText === "Recherche...") {
-              btnText.innerText = "Vérifier les doublons";
-              btnIcon.innerText = "🔍";
-            }
-          }, 500);
+            tg.showAlert("Erreur : " + error.message);
+          }, 100);
         }
       }
 
