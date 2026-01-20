@@ -3,122 +3,288 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ajout Élève</title>
+    <title>Gestion Élèves</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+      :root {
+        --tg-theme-bg-color: #fff;
+        --tg-theme-text-color: #000;
+        --tg-theme-button-color: #3390ec;
+        --tg-theme-button-text-color: #fff;
+        --tg-theme-secondary-bg-color: #f4f4f5;
+      }
       body {
-        font-family: sans-serif;
-        background-color: var(--tg-theme-bg-color, #fff);
-        color: var(--tg-theme-text-color, #000);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        background-color: var(--tg-theme-bg-color);
+        color: var(--tg-theme-text-color);
+        margin: 0;
+        padding: 0;
+      }
+
+      /* HEADER */
+      .header {
+        position: sticky;
+        top: 0;
+        background: var(--tg-theme-bg-color);
+        padding: 15px;
+        border-bottom: 1px solid #ccc;
+        z-index: 100;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .title {
+        font-weight: bold;
+        font-size: 18px;
+      }
+      .btn-add {
+        background: var(--tg-theme-button-color);
+        color: var(--tg-theme-button-text-color);
+        border: none;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      /* LISTE */
+      .container {
+        padding: 15px;
+      }
+      .search-bar {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        background: var(--tg-theme-secondary-bg-color);
+        color: var(--tg-theme-text-color);
+        box-sizing: border-box;
+        margin-bottom: 15px;
+      }
+
+      .student-card {
+        background: var(--tg-theme-secondary-bg-color);
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .info h3 {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+      }
+      .info p {
+        margin: 0;
+        font-size: 14px;
+        opacity: 0.7;
+      }
+      .actions button {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-left: 5px;
+      }
+      .btn-edit {
+        background: #f0ad4e;
+        color: white;
+      }
+      .btn-del {
+        background: #d9534f;
+        color: white;
+      }
+
+      /* FORMULAIRE (Caché par défaut) */
+      #view-form {
+        display: none;
         padding: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
       }
       input,
       select {
         width: 100%;
-        padding: 10px;
-        margin: 5px 0 15px 0;
+        padding: 12px;
         border: 1px solid #ccc;
         border-radius: 8px;
         box-sizing: border-box;
+        background: var(--tg-theme-secondary-bg-color);
+        color: var(--tg-theme-text-color);
       }
-      label {
-        font-weight: bold;
-        font-size: 14px;
-      }
-      h2 {
-        text-align: center;
-      }
-      .btn-main {
-        background-color: var(--tg-theme-button-color, #2481cc);
-        color: var(--tg-theme-button-text-color, #fff);
+      .btn-save {
         width: 100%;
         padding: 15px;
+        background: var(--tg-theme-button-color);
+        color: white;
         border: none;
-        border-radius: 8px;
+        border-radius: 10px;
         font-size: 16px;
-        cursor: pointer;
+        margin-top: 10px;
+      }
+      .btn-cancel {
+        width: 100%;
+        padding: 15px;
+        background: transparent;
+        color: var(--tg-theme-text-color);
+        border: 1px solid #ccc;
+        border-radius: 10px;
         margin-top: 10px;
       }
     </style>
   </head>
   <body>
-    <h2>Nouveau Dossier</h2>
+    <div id="view-list">
+      <div class="header">
+        <div class="title">Liste des Élèves</div>
+        <button class="btn-add" onclick="openForm(null)">+ Nouveau</button>
+      </div>
+      <div class="container">
+        <input
+          type="text"
+          id="searchInput"
+          class="search-bar"
+          placeholder="🔍 Rechercher un nom..."
+          onkeyup="loadStudents()"
+        />
+        <div id="studentList">Chargement...</div>
+      </div>
+    </div>
 
-    <label>Nom Complet</label>
-    <input type="text" id="nomComplet" placeholder="Ex: Jean Rakoto" />
+    <div id="view-form">
+      <h2 id="formTitle">Ajouter un élève</h2>
+      <input type="hidden" id="studentId" />
 
-    <label>Téléphone</label>
-    <input type="tel" id="telephone" placeholder="034..." />
+      <div class="form-group">
+        <label>Nom Complet</label><input type="text" id="nomComplet" />
+      </div>
+      <div class="form-group">
+        <label>Téléphone</label><input type="tel" id="telephone" />
+      </div>
+      <div class="form-group">
+        <label>Option</label>
+        <select id="option">
+          <option value="Journalier">Journalier</option>
+          <option value="Weekend">Weekend</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Département</label><input type="text" id="departement" />
+      </div>
 
-    <label>Date de Naissance</label>
-    <input type="date" id="dateNaissance" />
-
-    <label>Adresse</label>
-    <input type="text" id="adresse" />
-
-    <label>Église</label>
-    <input type="text" id="eglise" />
-
-    <label>Profession</label>
-    <input type="text" id="profession" />
-
-    <label>Option</label>
-    <select id="option">
-      <option value="Journalier">Journalier</option>
-      <option value="Weekend">Weekend</option>
-    </select>
-
-    <hr />
-    <h3>Contact Tree</h3>
-
-    <label>ID Application</label>
-    <input type="text" id="idApp" />
-
-    <label>Nom Contact</label>
-    <input type="text" id="nomTree" />
-
-    <label>Tel Contact</label>
-    <input type="tel" id="telTree" />
-
-    <label>Liaison</label>
-    <input type="text" id="liaison" placeholder="Père, Mère..." />
-
-    <label>Département / Classe</label>
-    <input type="text" id="departement" />
-
-    <button class="btn-main" onclick="envoyerDonnees()">ENREGISTRER</button>
+      <button class="btn-save" onclick="saveStudent()">ENREGISTRER</button>
+      <button class="btn-cancel" onclick="switchView('list')">Annuler</button>
+    </div>
 
     <script>
-      // Initialisation de la Mini App
       const tg = window.Telegram.WebApp;
       tg.expand();
 
-      function envoyerDonnees() {
-        // 1. On récupère les valeurs
+      // --- GESTION DES VUES ---
+      function switchView(viewName) {
+        document.getElementById("view-list").style.display =
+          viewName === "list" ? "block" : "none";
+        document.getElementById("view-form").style.display =
+          viewName === "form" ? "block" : "none";
+        if (viewName === "list") loadStudents(); // Recharger la liste quand on revient
+      }
+
+      // --- 1. READ (Charger la liste) ---
+      async function loadStudents() {
+        const query = document.getElementById("searchInput").value;
+        const res = await fetch(`/api/students?q=${query}`);
+        const students = await res.json();
+
+        const listDiv = document.getElementById("studentList");
+        listDiv.innerHTML = "";
+
+        students.forEach((s) => {
+          const card = document.createElement("div");
+          card.className = "student-card";
+          card.innerHTML = `
+                    <div class="info">
+                        <h3>${s.nomComplet}</h3>
+                        <p>${s.option} - ${s.departement}</p>
+                    </div>
+                    <div class="actions">
+                        <button class="btn-edit" onclick="openForm(${s.id})">✏️</button>
+                        <button class="btn-del" onclick="deleteStudent(${s.id})">🗑️</button>
+                    </div>
+                `;
+          listDiv.appendChild(card);
+        });
+      }
+
+      // --- 2. PREPARER LE FORMULAIRE (Add ou Edit) ---
+      async function openForm(id) {
+        document.getElementById("studentId").value = id || ""; // Si id est null, c'est un ajout
+        document.getElementById("formTitle").innerText = id
+          ? "Modifier l'élève"
+          : "Nouveau Dossier";
+
+        // Reset des champs
+        document.getElementById("nomComplet").value = "";
+        document.getElementById("telephone").value = "";
+        document.getElementById("departement").value = "";
+
+        if (id) {
+          // Si c'est une modif, on va chercher les infos
+          const res = await fetch(`/api/students/${id}`);
+          const s = await res.json();
+          document.getElementById("nomComplet").value = s.nomComplet;
+          document.getElementById("telephone").value = s.telephone;
+          document.getElementById("option").value = s.option;
+          document.getElementById("departement").value = s.departement;
+        }
+
+        switchView("form");
+      }
+
+      // --- 3. CREATE & UPDATE (Sauvegarder) ---
+      async function saveStudent() {
+        const id = document.getElementById("studentId").value;
         const data = {
           nomComplet: document.getElementById("nomComplet").value,
           telephone: document.getElementById("telephone").value,
-          dateNaissance: document.getElementById("dateNaissance").value,
-          adresse: document.getElementById("adresse").value,
-          eglise: document.getElementById("eglise").value,
-          profession: document.getElementById("profession").value,
           option: document.getElementById("option").value,
-          idApp: document.getElementById("idApp").value,
-          nomTree: document.getElementById("nomTree").value,
-          telTree: document.getElementById("telTree").value,
-          liaison: document.getElementById("liaison").value,
           departement: document.getElementById("departement").value,
         };
 
-        // 2. Vérification simple
-        if (!data.nomComplet) {
-          tg.showAlert("Le nom est obligatoire !");
-          return;
-        }
+        const method = id ? "PUT" : "POST";
+        const url = id ? `/api/students/${id}` : "/api/students";
 
-        // 3. On envoie les données au Bot Telegram
-        tg.sendData(JSON.stringify(data));
+        await fetch(url, {
+          method: method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        // On ferme le formulaire et on revient à la liste
+        switchView("list");
+
+        // Feedback optionnel via Telegram
+        tg.sendData("Action terminée");
       }
+
+      // --- 4. DELETE (Supprimer) ---
+      async function deleteStudent(id) {
+        if (confirm("Voulez-vous vraiment supprimer cet élève ?")) {
+          await fetch(`/api/students/${id}`, { method: "DELETE" });
+          loadStudents();
+        }
+      }
+
+      // Chargement initial
+      loadStudents();
     </script>
   </body>
 </html>
