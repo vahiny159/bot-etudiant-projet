@@ -347,13 +347,14 @@
       tg.ready();
       tg.setHeaderColor("#F9FAFB");
 
-      // --- FONCTION CHECK DOUBLON ---
+      // --- FONCTION CHECK DOUBLON CORRIGÉE (Ne bloque plus) ---
       async function checkDuplicates() {
         const nom = document.getElementById("nomComplet").value;
         const tel = document.getElementById("telephone").value;
         const btnText = document.getElementById("check-text");
         const btnIcon = document.getElementById("check-icon");
 
+        // Validation
         if (!nom) {
           if (tg.HapticFeedback)
             tg.HapticFeedback.notificationOccurred("error");
@@ -361,7 +362,7 @@
           return;
         }
 
-        const originalText = btnText.innerText;
+        // UI Loading (Début recherche)
         btnText.innerText = "Recherche...";
         btnIcon.innerText = "⏳";
 
@@ -379,9 +380,7 @@
 
           const result = await response.json();
 
-          btnText.innerText = "Vérifier les doublons";
-          btnIcon.innerText = "🔍";
-
+          // --- CAS 1 : DOUBLON TROUVÉ ---
           if (
             result.found &&
             result.candidates &&
@@ -390,16 +389,24 @@
             if (tg.HapticFeedback)
               tg.HapticFeedback.notificationOccurred("warning");
             showDuplicateModal(result.candidates);
-          } else {
+          }
+          // --- CAS 2 : PAS DE DOUBLON (C'est ici que ça bloquait) ---
+          else {
             if (tg.HapticFeedback)
               tg.HapticFeedback.notificationOccurred("success");
-            tg.showAlert("✅ Aucun doublon détecté.");
+            // On utilise alert() en fallback si tg.showAlert bug
+            if (tg.showAlert)
+              tg.showAlert("✅ C'est tout bon ! Aucun doublon détecté.");
+            else alert("✅ C'est tout bon ! Aucun doublon détecté.");
           }
         } catch (error) {
           console.error(error);
-          btnText.innerText = "Réessayer";
-          btnIcon.innerText = "❌";
-          tg.showAlert("Erreur : Impossible de contacter le serveur.");
+          tg.showAlert("Erreur : Impossible de vérifier.");
+        } finally {
+          // --- IMPORTANT : CE BLOC S'EXÉCUTE TOUJOURS ---
+          // Quoi qu'il arrive (trouvé, pas trouvé, erreur), on remet le bouton normal
+          btnText.innerText = "Vérifier les doublons";
+          btnIcon.innerText = "🔍";
         }
       }
 
