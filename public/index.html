@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gestion Élèves</title>
+    <title>Formulaire Inscription</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
       :root {
@@ -12,278 +12,246 @@
         --tg-theme-button-color: #3390ec;
         --tg-theme-button-text-color: #fff;
         --tg-theme-secondary-bg-color: #f4f4f5;
+        --tg-theme-hint-color: #999;
       }
       body {
         font-family:
           -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
           Arial, sans-serif;
-        background-color: var(--tg-theme-bg-color);
+        background-color: var(
+          --tg-theme-secondary-bg-color
+        ); /* Fond gris clair */
         color: var(--tg-theme-text-color);
         margin: 0;
-        padding: 0;
-      }
-
-      /* HEADER */
-      .header {
-        position: sticky;
-        top: 0;
-        background: var(--tg-theme-bg-color);
-        padding: 15px;
-        border-bottom: 1px solid #ccc;
-        z-index: 100;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .title {
-        font-weight: bold;
-        font-size: 18px;
-      }
-      .btn-add {
-        background: var(--tg-theme-button-color);
-        color: var(--tg-theme-button-text-color);
-        border: none;
-        padding: 8px 15px;
-        border-radius: 20px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-
-      /* LISTE */
-      .container {
         padding: 15px;
       }
-      .search-bar {
-        width: 100%;
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px solid #ddd;
-        background: var(--tg-theme-secondary-bg-color);
-        color: var(--tg-theme-text-color);
-        box-sizing: border-box;
-        margin-bottom: 15px;
-      }
 
-      .student-card {
-        background: var(--tg-theme-secondary-bg-color);
-        padding: 15px;
-        border-radius: 12px;
-        margin-bottom: 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .info h3 {
-        margin: 0 0 5px 0;
+      h2 {
+        margin-top: 0;
+        color: var(--tg-theme-button-color);
         font-size: 16px;
-      }
-      .info p {
-        margin: 0;
-        font-size: 14px;
-        opacity: 0.7;
-      }
-      .actions button {
-        padding: 5px 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-left: 5px;
-      }
-      .btn-edit {
-        background: #f0ad4e;
-        color: white;
-      }
-      .btn-del {
-        background: #d9534f;
-        color: white;
+        text-transform: uppercase;
+        letter-spacing: 1px;
       }
 
-      /* FORMULAIRE (Caché par défaut) */
-      #view-form {
-        display: none;
-        padding: 20px;
+      .card {
+        background-color: var(--tg-theme-bg-color);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       }
+
       .form-group {
-        margin-bottom: 15px;
+        margin-bottom: 12px;
       }
+
       label {
         display: block;
         margin-bottom: 5px;
+        font-size: 13px;
+        color: var(--tg-theme-hint-color);
         font-weight: 500;
       }
+
       input,
       select {
         width: 100%;
         padding: 12px;
-        border: 1px solid #ccc;
+        border: 1px solid #e0e0e0;
         border-radius: 8px;
         box-sizing: border-box;
-        background: var(--tg-theme-secondary-bg-color);
+        background-color: var(--tg-theme-bg-color);
         color: var(--tg-theme-text-color);
+        font-size: 16px; /* Taille lisible mobile */
+        outline: none;
+        transition: border-color 0.2s;
       }
-      .btn-save {
-        width: 100%;
+
+      input:focus,
+      select:focus {
+        border-color: var(--tg-theme-button-color);
+      }
+
+      /* Boutons Radio pour l'Option */
+      .radio-group {
+        display: flex;
+        gap: 10px;
+      }
+      .radio-label {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        background: var(--tg-theme-bg-color);
+      }
+      .radio-label.selected {
+        background-color: var(--tg-theme-button-color);
+        color: var(--tg-theme-button-text-color);
+        border-color: var(--tg-theme-button-color);
+        font-weight: bold;
+      }
+      input[type="radio"] {
+        display: none;
+      }
+
+      /* Bouton Principal */
+      #main-btn {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        background-color: var(--tg-theme-button-color);
+        color: var(--tg-theme-button-text-color);
+        font-size: 16px;
+        font-weight: bold;
         padding: 15px;
-        background: var(--tg-theme-button-color);
-        color: white;
         border: none;
         border-radius: 10px;
-        font-size: 16px;
-        margin-top: 10px;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        z-index: 100;
       }
-      .btn-cancel {
-        width: 100%;
-        padding: 15px;
-        background: transparent;
-        color: var(--tg-theme-text-color);
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        margin-top: 10px;
+
+      /* Espace en bas pour ne pas cacher le contenu derrière le bouton */
+      .spacer {
+        height: 80px;
       }
     </style>
   </head>
   <body>
-    <div id="view-list">
-      <div class="header">
-        <div class="title">Liste des Élèves</div>
-        <button class="btn-add" onclick="openForm(null)">+ Nouveau</button>
+    <h2>👤 Détails de l'élève</h2>
+    <div class="card">
+      <div class="form-group">
+        <label>Nom Complet *</label>
+        <input type="text" id="nomComplet" placeholder="Ex: Jean Rakoto" />
       </div>
-      <div class="container">
-        <input
-          type="text"
-          id="searchInput"
-          class="search-bar"
-          placeholder="🔍 Rechercher un nom..."
-          onkeyup="loadStudents()"
-        />
-        <div id="studentList">Chargement...</div>
+      <div class="form-group">
+        <label>Téléphone</label>
+        <input type="tel" id="telephone" placeholder="034 00 000 00" />
+      </div>
+      <div class="form-group">
+        <label>Date de Naissance</label>
+        <input type="date" id="dateNaissance" />
+      </div>
+      <div class="form-group">
+        <label>Adresse</label>
+        <input type="text" id="adresse" />
+      </div>
+      <div class="form-group">
+        <label>Église</label>
+        <input type="text" id="eglise" />
+      </div>
+      <div class="form-group">
+        <label>Profession</label>
+        <input type="text" id="profession" />
+      </div>
+
+      <div class="form-group">
+        <label>Option d'apprentissage *</label>
+        <div class="radio-group">
+          <label class="radio-label" onclick="selectOption('Journalier')">
+            Journalier
+            <input type="radio" name="option" value="Journalier" />
+          </label>
+          <label class="radio-label" onclick="selectOption('Weekend')">
+            Weekend
+            <input type="radio" name="option" value="Weekend" />
+          </label>
+        </div>
+        <input type="hidden" id="optionSelected" />
       </div>
     </div>
 
-    <div id="view-form">
-      <h2 id="formTitle">Ajouter un élève</h2>
-      <input type="hidden" id="studentId" />
-
+    <h2>🌳 Détails Tree (Parrainage)</h2>
+    <div class="card">
       <div class="form-group">
-        <label>Nom Complet</label><input type="text" id="nomComplet" />
+        <label>ID Application</label>
+        <input type="text" id="idApp" />
       </div>
       <div class="form-group">
-        <label>Téléphone</label><input type="tel" id="telephone" />
+        <label>Nom Tree (Contact)</label>
+        <input type="text" id="nomTree" />
       </div>
       <div class="form-group">
-        <label>Option</label>
-        <select id="option">
-          <option value="Journalier">Journalier</option>
-          <option value="Weekend">Weekend</option>
-        </select>
+        <label>Numéro Tel Tree</label>
+        <input type="tel" id="telTree" />
       </div>
       <div class="form-group">
-        <label>Département</label><input type="text" id="departement" />
+        <label>Liaison (Père, Mère, Ami...)</label>
+        <input type="text" id="liaison" />
       </div>
-
-      <button class="btn-save" onclick="saveStudent()">ENREGISTRER</button>
-      <button class="btn-cancel" onclick="switchView('list')">Annuler</button>
+      <div class="form-group">
+        <label>Département / Classe</label>
+        <input type="text" id="departement" />
+      </div>
     </div>
+
+    <div class="spacer"></div>
+
+    <button id="main-btn" onclick="submitForm()">ENREGISTRER LE DOSSIER</button>
 
     <script>
       const tg = window.Telegram.WebApp;
-      tg.expand();
+      tg.expand(); // Plein écran
 
-      // --- GESTION DES VUES ---
-      function switchView(viewName) {
-        document.getElementById("view-list").style.display =
-          viewName === "list" ? "block" : "none";
-        document.getElementById("view-form").style.display =
-          viewName === "form" ? "block" : "none";
-        if (viewName === "list") loadStudents(); // Recharger la liste quand on revient
+      // Gestion jolie des boutons radio
+      function selectOption(value) {
+        document.getElementById("optionSelected").value = value;
+        document
+          .querySelectorAll(".radio-label")
+          .forEach((el) => el.classList.remove("selected"));
+        event.currentTarget.classList.add("selected");
       }
 
-      // --- 1. READ (Charger la liste) ---
-      async function loadStudents() {
-        const query = document.getElementById("searchInput").value;
-        const res = await fetch(`/api/students?q=${query}`);
-        const students = await res.json();
-
-        const listDiv = document.getElementById("studentList");
-        listDiv.innerHTML = "";
-
-        students.forEach((s) => {
-          const card = document.createElement("div");
-          card.className = "student-card";
-          card.innerHTML = `
-                    <div class="info">
-                        <h3>${s.nomComplet}</h3>
-                        <p>${s.option} - ${s.departement}</p>
-                    </div>
-                    <div class="actions">
-                        <button class="btn-edit" onclick="openForm(${s.id})">✏️</button>
-                        <button class="btn-del" onclick="deleteStudent(${s.id})">🗑️</button>
-                    </div>
-                `;
-          listDiv.appendChild(card);
-        });
-      }
-
-      // --- 2. PREPARER LE FORMULAIRE (Add ou Edit) ---
-      async function openForm(id) {
-        document.getElementById("studentId").value = id || ""; // Si id est null, c'est un ajout
-        document.getElementById("formTitle").innerText = id
-          ? "Modifier l'élève"
-          : "Nouveau Dossier";
-
-        // Reset des champs
-        document.getElementById("nomComplet").value = "";
-        document.getElementById("telephone").value = "";
-        document.getElementById("departement").value = "";
-
-        if (id) {
-          // Si c'est une modif, on va chercher les infos
-          const res = await fetch(`/api/students/${id}`);
-          const s = await res.json();
-          document.getElementById("nomComplet").value = s.nomComplet;
-          document.getElementById("telephone").value = s.telephone;
-          document.getElementById("option").value = s.option;
-          document.getElementById("departement").value = s.departement;
-        }
-
-        switchView("form");
-      }
-
-      // --- 3. CREATE & UPDATE (Sauvegarder) ---
-      async function saveStudent() {
-        const id = document.getElementById("studentId").value;
+      async function submitForm() {
+        // 1. Récupération des données
         const data = {
           nomComplet: document.getElementById("nomComplet").value,
           telephone: document.getElementById("telephone").value,
-          option: document.getElementById("option").value,
+          dateNaissance: document.getElementById("dateNaissance").value,
+          adresse: document.getElementById("adresse").value,
+          eglise: document.getElementById("eglise").value,
+          profession: document.getElementById("profession").value,
+          option: document.getElementById("optionSelected").value,
+
+          idApp: document.getElementById("idApp").value,
+          nomTree: document.getElementById("nomTree").value,
+          telTree: document.getElementById("telTree").value,
+          liaison: document.getElementById("liaison").value,
           departement: document.getElementById("departement").value,
         };
 
-        const method = id ? "PUT" : "POST";
-        const url = id ? `/api/students/${id}` : "/api/students";
+        // 2. Validation minimale
+        if (!data.nomComplet || !data.option) {
+          tg.showAlert("Veuillez remplir le Nom et choisir une Option.");
+          return;
+        }
 
-        await fetch(url, {
-          method: method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
+        // Changement texte bouton pour feedback
+        const btn = document.getElementById("main-btn");
+        btn.innerText = "Envoi en cours...";
+        btn.disabled = true;
 
-        // On ferme le formulaire et on revient à la liste
-        switchView("list");
+        try {
+          // 3. Envoi au serveur (Backend)
+          await fetch("/api/students", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
 
-        // Feedback optionnel via Telegram
-        tg.sendData("Action terminée");
-      }
-
-      // --- 4. DELETE (Supprimer) ---
-      async function deleteStudent(id) {
-        if (confirm("Voulez-vous vraiment supprimer cet élève ?")) {
-          await fetch(`/api/students/${id}`, { method: "DELETE" });
-          loadStudents();
+          // 4. Signal au Bot que c'est fini et fermeture
+          // On renvoie juste le nom pour que le bot confirme la réception
+          tg.sendData(data.nomComplet);
+        } catch (error) {
+          tg.showAlert("Erreur réseau : " + error.message);
+          btn.innerText = "RÉESSAYER";
+          btn.disabled = false;
         }
       }
-
-      loadStudents();
     </script>
   </body>
 </html>

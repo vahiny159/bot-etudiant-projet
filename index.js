@@ -8,102 +8,65 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const BOT_TOKEN = process.env.BOT_TOKEN;
-// L'URL publique de Render est nécessaire pour le bouton
+// L'URL publique de Render (nécessaire pour le bouton)
 const WEB_APP_URL =
   process.env.RENDER_EXTERNAL_URL || `https://ton-projet.onrender.com`;
 
 app.use(cors());
 app.use(bodyParser.json());
+// Servir le dossier public (où se trouve le formulaire)
 app.use(express.static(path.join(__dirname, "public")));
 
-// --- BDD SIMULÉE ---
-let students = [
-  {
-    id: 1,
-    nomComplet: "Jean Test",
-    telephone: "0340000000",
-    option: "Journalier",
-    departement: "Informatique",
-  },
-];
-let nextId = 2;
+// --- BASE DE DONNÉES SIMULÉE ---
+let students = [];
+let nextId = 1;
 
-// --- API CRUD COMPLÈTE ---
+app.get("/", (req, res) => res.send("Serveur Formulaire Actif"));
 
-// 1. GET (Liste + Recherche)
-app.get("/api/students", (req, res) => {
-  const query = req.query.q ? req.query.q.toLowerCase() : null;
-  if (query)
-    return res.json(
-      students.filter((s) => s.nomComplet.toLowerCase().includes(query)),
-    );
-  res.json(students);
-});
-
-// 2. GET ONE (Pour récupérer un seul élève avant modif)
-app.get("/api/students/:id", (req, res) => {
-  const s = students.find((x) => x.id == req.params.id);
-  s ? res.json(s) : res.status(404).json({});
-});
-
-// 3. POST (Ajouter)
+// --- API : JUSTE LE CREATE (POST) ---
 app.post("/api/students", (req, res) => {
   const newStudent = req.body;
+
+  // Ajout des infos automatiques
   newStudent.id = nextId++;
   newStudent.dateAjout = new Date().toLocaleDateString("fr-FR");
+
   students.push(newStudent);
-  res.json(newStudent);
+
+  console.log("📝 Nouveau dossier reçu :", newStudent.nomComplet);
+  res.json({ success: true, id: newStudent.id });
 });
 
-// 4. PUT (Modifier) - NOUVEAU !
-app.put("/api/students/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const index = students.findIndex((s) => s.id === id);
-  if (index !== -1) {
-    // On garde l'ID et la date, on met à jour le reste
-    students[index] = {
-      ...students[index],
-      ...req.body,
-      id: id,
-      dateAjout: students[index].dateAjout,
-    };
-    res.json(students[index]);
-  } else {
-    res.status(404).json({ error: "Non trouvé" });
-  }
-});
-
-// 5. DELETE (Supprimer)
-app.delete("/api/students/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  students = students.filter((s) => s.id !== id);
-  res.json({ success: true });
-});
-
-// --- BOT TELEGRAM (Juste un Lanceur) ---
+// --- BOT TELEGRAM ---
 if (BOT_TOKEN) {
   const bot = new Telegraf(BOT_TOKEN);
 
-  // Menu simple
+  // Commande /start : Affiche juste le bouton
   bot.start((ctx) => {
     ctx.reply(
-      "**Gestion Fruits**\nCliquez ci-dessous pour ouvrir l'application complète.",
+      "👋 **Bienvenue !**\nCliquez ci-dessous pour remplir une nouvelle fiche d'inscription.",
       Markup.keyboard([
-        [Markup.button.webApp("📱 Ouvrir le Tableau de Bord", WEB_APP_URL)],
+        // Ce bouton ouvre la Mini App
+        [Markup.button.webApp("📝 Remplir le Formulaire", WEB_APP_URL)],
       ]).resize(),
     );
   });
 
-  // Écoute quand l'app se ferme
+  // Confirmation visuelle quand l'utilisateur a fini
   bot.on("message", (ctx) => {
     if (ctx.message.web_app_data) {
-      ctx.reply("✅ Opération terminée dans l'application !");
+      ctx.reply(
+        `✅ Le dossier pour "${ctx.message.web_app_data.data}" a bien été reçu !`,
+      );
     }
   });
 
   bot.launch();
+  // Gestion arrêt propre
   process.once("SIGINT", () => bot.stop("SIGINT"));
   process.once("SIGTERM", () => bot.stop("SIGTERM"));
 }
 
-app.listen(PORT, () => console.log(`🚀 Serveur CRUD complet sur ${PORT}`));
+app.listen(PORT, () =>
+  console.log(`🚀 Serveur Formulaire sur le port ${PORT}`),
+);
