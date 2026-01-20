@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Inscription Yellow</title>
+    <title>Inscription MGC</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -101,7 +101,7 @@
                 <input
                   type="text"
                   id="nomComplet"
-                  placeholder="Ex: Jean Rakoto"
+                  placeholder="Ex: Razafimahandry Vahiny"
                   class="input-glass w-full border border-gray-200 rounded-xl px-4 py-3.5 outline-none font-semibold placeholder-gray-400 text-gray-900"
                   oninput="clearError()"
                 />
@@ -156,7 +156,7 @@
                 </div>
                 <div>
                   <label class="block text-xs font-bold text-gray-500 mb-1 ml-1"
-                    >JOB</label
+                    >PROFESSION</label
                   >
                   <input
                     type="text"
@@ -165,17 +165,6 @@
                   />
                 </div>
               </div>
-
-              <button
-                type="button"
-                onclick="checkDuplicates()"
-                id="btn-check"
-                class="w-full flex justify-center items-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 bg-yellow-50 text-yellow-800 border border-yellow-200 hover:bg-yellow-100 hover:border-yellow-300"
-              >
-                <span id="check-icon" class="text-base">🔍</span>
-                <span id="check-text">Vérifier les doublons</span>
-              </button>
-
               <div>
                 <label class="block text-xs font-bold text-gray-500 mb-2 ml-1"
                   >OPTION</label
@@ -204,6 +193,14 @@
                 </div>
                 <input type="hidden" id="optionSelected" value="Journalier" />
               </div>
+              <button
+                type="button"
+                onclick="checkDuplicates()"
+                id="btn-check"
+                class="w-full flex justify-center items-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 bg-yellow-50 text-yellow-800 border border-yellow-200 hover:bg-yellow-100 hover:border-yellow-300"
+              >
+                <span id="check-text">Check doublons</span>
+              </button>
             </div>
           </div>
         </div>
@@ -218,12 +215,12 @@
             <div
               class="flex items-center mb-4 text-xs font-bold uppercase tracking-wider text-yellow-600"
             >
-              <span class="text-lg mr-2">🌳</span> Tree / Parrainage
+              <span class="text-lg mr-2">🌳</span> Tree
             </div>
             <div class="space-y-4">
               <div>
                 <label class="block text-xs font-bold text-gray-500 mb-1 ml-1"
-                  >ID APPLICATION</label
+                  >ID SMADA</label
                 >
                 <input
                   type="text"
@@ -234,7 +231,7 @@
               </div>
               <div>
                 <label class="block text-xs font-bold text-gray-500 mb-1 ml-1"
-                  >NOM CONTACT</label
+                  >NOM TREE</label
                 >
                 <input
                   type="text"
@@ -260,14 +257,14 @@
                   <input
                     type="text"
                     id="liaison"
-                    placeholder="Père"
+                    placeholder="Namana,..."
                     class="input-glass w-full border border-gray-200 rounded-xl px-4 py-3.5 outline-none font-medium text-gray-900"
                   />
                 </div>
               </div>
               <div>
                 <label class="block text-xs font-bold text-gray-500 mb-1 ml-1"
-                  >CLASSE</label
+                  >DEPARTEMENT/CLASSE</label
                 >
                 <input
                   type="text"
@@ -369,7 +366,6 @@
         btnIcon.innerText = "⏳";
 
         try {
-          // On tente d'appeler le serveur
           const response = await fetch("/api/check-duplicates", {
             method: "POST",
             headers: {
