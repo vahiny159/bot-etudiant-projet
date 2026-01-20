@@ -2,221 +2,395 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Formulaire Inscription</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Inscription</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+      /* --- VARIABLES & THEME --- */
       :root {
-        --tg-theme-bg-color: #fff;
-        --tg-theme-text-color: #000;
-        --tg-theme-button-color: #3390ec;
-        --tg-theme-button-text-color: #fff;
-        --tg-theme-secondary-bg-color: #f4f4f5;
-        --tg-theme-hint-color: #999;
-      }
-      body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-          Arial, sans-serif;
-        background-color: var(
-          --tg-theme-secondary-bg-color
-        ); /* Fond gris clair */
-        color: var(--tg-theme-text-color);
-        margin: 0;
-        padding: 15px;
+        /* Couleurs natives Telegram ou Fallback */
+        --bg-color: var(--tg-theme-secondary-bg-color, #f5f5f7);
+        --card-bg: var(--tg-theme-bg-color, #ffffff);
+        --text-color: var(--tg-theme-text-color, #000000);
+        --hint-color: var(--tg-theme-hint-color, #8e8e93);
+        --accent-color: var(--tg-theme-button-color, #007aff);
+        --accent-text: var(--tg-theme-button-text-color, #ffffff);
+        --danger-color: #ff3b30;
+
+        /* Espacements et Arrondis */
+        --radius-l: 16px;
+        --radius-m: 10px;
+        --space-unit: 16px;
       }
 
-      h2 {
-        margin-top: 0;
-        color: var(--tg-theme-button-color);
-        font-size: 16px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent; /* Enlève le flash gris au clic sur mobile */
+      }
+
+      /* --- HEADER --- */
+      header {
+        padding: 24px var(--space-unit) 8px;
+        text-align: center;
+      }
+      h1 {
+        font-size: 22px;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.5px;
+      }
+      p.subtitle {
+        margin-top: 5px;
+        color: var(--hint-color);
+        font-size: 14px;
+      }
+
+      /* --- CONTAINERS & CARDS --- */
+      .container {
+        padding: var(--space-unit);
+        padding-bottom: 100px; /* Espace pour le bouton flottant */
       }
 
       .card {
-        background-color: var(--tg-theme-bg-color);
-        border-radius: 12px;
-        padding: 15px;
+        background-color: var(--card-bg);
+        border-radius: var(--radius-l);
+        padding: 20px;
         margin-bottom: 20px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); /* Ombre très douce */
       }
 
-      .form-group {
+      .section-title {
+        display: flex;
+        align-items: center;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--hint-color);
+        font-weight: 600;
         margin-bottom: 12px;
+        margin-left: 4px;
+      }
+      .section-title span {
+        margin-right: 6px;
+        font-size: 16px;
+      }
+
+      /* --- INPUTS --- */
+      .form-group {
+        margin-bottom: 16px;
+        position: relative;
       }
 
       label {
         display: block;
-        margin-bottom: 5px;
         font-size: 13px;
-        color: var(--tg-theme-hint-color);
         font-weight: 500;
+        margin-bottom: 6px;
+        color: var(--text-color);
       }
 
-      input,
-      select {
+      input {
         width: 100%;
-        padding: 12px;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
+        padding: 14px 12px;
+        border-radius: var(--radius-m);
+        border: 1px solid transparent;
+        background-color: var(--bg-color); /* Input gris clair sur fond blanc */
+        color: var(--text-color);
+        font-size: 16px;
         box-sizing: border-box;
-        background-color: var(--tg-theme-bg-color);
-        color: var(--tg-theme-text-color);
-        font-size: 16px; /* Taille lisible mobile */
+        transition: all 0.2s ease;
+      }
+
+      input:focus {
         outline: none;
-        transition: border-color 0.2s;
+        background-color: var(--card-bg);
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
       }
 
-      input:focus,
-      select:focus {
-        border-color: var(--tg-theme-button-color);
+      input::placeholder {
+        color: var(--hint-color);
+        opacity: 0.6;
       }
 
-      /* Boutons Radio pour l'Option */
-      .radio-group {
+      /* Erreur visuelle */
+      .error input {
+        border-color: var(--danger-color);
+        background-color: rgba(255, 59, 48, 0.05);
+      }
+
+      /* --- SEGMENTED CONTROL (Le Switch Journalier/Weekend) --- */
+      .segmented-control {
         display: flex;
-        gap: 10px;
-      }
-      .radio-label {
-        flex: 1;
-        padding: 10px;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        text-align: center;
-        cursor: pointer;
-        background: var(--tg-theme-bg-color);
-      }
-      .radio-label.selected {
-        background-color: var(--tg-theme-button-color);
-        color: var(--tg-theme-button-text-color);
-        border-color: var(--tg-theme-button-color);
-        font-weight: bold;
-      }
-      input[type="radio"] {
-        display: none;
+        background-color: var(--bg-color);
+        padding: 4px;
+        border-radius: var(--radius-m);
+        position: relative;
+        margin-top: 8px;
       }
 
-      /* Bouton Principal */
-      #main-btn {
+      .segment-option {
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--hint-color);
+        z-index: 2;
+        cursor: pointer;
+        transition: color 0.3s;
+      }
+
+      .segment-option.active {
+        color: var(--text-color); /* Texte sombre quand actif */
+      }
+
+      /* Le petit bloc blanc qui glisse */
+      .segment-bg {
+        position: absolute;
+        top: 4px;
+        bottom: 4px;
+        left: 4px;
+        width: calc(50% - 4px);
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        z-index: 1;
+      }
+
+      /* --- BOUTON FLOTTANT --- */
+      .fab-container {
         position: fixed;
         bottom: 20px;
-        left: 20px;
-        right: 20px;
-        background-color: var(--tg-theme-button-color);
-        color: var(--tg-theme-button-text-color);
-        font-size: 16px;
-        font-weight: bold;
-        padding: 15px;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        left: var(--space-unit);
+        right: var(--space-unit);
         z-index: 100;
       }
 
-      /* Espace en bas pour ne pas cacher le contenu derrière le bouton */
-      .spacer {
-        height: 80px;
+      .btn-main {
+        width: 100%;
+        background-color: var(--accent-color);
+        color: var(--accent-text);
+        font-size: 17px;
+        font-weight: 600;
+        padding: 16px;
+        border: none;
+        border-radius: var(--radius-l);
+        cursor: pointer;
+        box-shadow: 0 8px 20px rgba(0, 122, 255, 0.25);
+        transition:
+          transform 0.1s,
+          opacity 0.2s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .btn-main:active {
+        transform: scale(0.98);
+      }
+      .btn-main:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      /* Animation de chargement */
+      .spinner {
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+        display: none;
+        margin-right: 10px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
       }
     </style>
   </head>
   <body>
-    <h2>👤 Détails de l'élève</h2>
-    <div class="card">
-      <div class="form-group">
-        <label>Nom Complet *</label>
-        <input type="text" id="nomComplet" placeholder="Ex: Jean Rakoto" />
-      </div>
-      <div class="form-group">
-        <label>Téléphone</label>
-        <input type="tel" id="telephone" placeholder="034 00 000 00" />
-      </div>
-      <div class="form-group">
-        <label>Date de Naissance</label>
-        <input type="date" id="dateNaissance" />
-      </div>
-      <div class="form-group">
-        <label>Adresse</label>
-        <input type="text" id="adresse" />
-      </div>
-      <div class="form-group">
-        <label>Église</label>
-        <input type="text" id="eglise" />
-      </div>
-      <div class="form-group">
-        <label>Profession</label>
-        <input type="text" id="profession" />
-      </div>
+    <header>
+      <h1>Nouveau Dossier</h1>
+      <p class="subtitle">Remplissez les informations ci-dessous</p>
+    </header>
 
-      <div class="form-group">
-        <label>Option d'apprentissage *</label>
-        <div class="radio-group">
-          <label class="radio-label" onclick="selectOption('Journalier')">
-            Journalier
-            <input type="radio" name="option" value="Journalier" />
-          </label>
-          <label class="radio-label" onclick="selectOption('Weekend')">
-            Weekend
-            <input type="radio" name="option" value="Weekend" />
-          </label>
+    <div class="container">
+      <div class="section-title"><span>👤</span> Détails de l'élève</div>
+      <div class="card">
+        <div class="form-group" id="grp-nom">
+          <label>Nom Complet *</label>
+          <input
+            type="text"
+            id="nomComplet"
+            placeholder="Ex: Jean Rakoto"
+            oninput="clearError('grp-nom')"
+          />
         </div>
-        <input type="hidden" id="optionSelected" />
+
+        <div class="form-group">
+          <div style="display: flex; gap: 10px">
+            <div style="flex: 1">
+              <label>Téléphone</label>
+              <input type="tel" id="telephone" placeholder="034..." />
+            </div>
+            <div style="flex: 1">
+              <label>Date Naissance</label>
+              <input type="date" id="dateNaissance" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Adresse</label>
+          <input type="text" id="adresse" placeholder="Lot, Quartier, Ville" />
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; gap: 10px">
+            <div style="flex: 1">
+              <label>Église</label>
+              <input type="text" id="eglise" />
+            </div>
+            <div style="flex: 1">
+              <label>Profession</label>
+              <input type="text" id="profession" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Option d'apprentissage</label>
+          <div class="segmented-control">
+            <div class="segment-bg" id="segment-bg"></div>
+            <div
+              class="segment-option active"
+              onclick="selectOption('Journalier', 0)"
+            >
+              Journalier
+            </div>
+            <div class="segment-option" onclick="selectOption('Weekend', 1)">
+              Weekend
+            </div>
+          </div>
+          <input type="hidden" id="optionSelected" value="Journalier" />
+        </div>
+      </div>
+
+      <div class="section-title"><span>🌳</span> Détails Tree (Parrainage)</div>
+      <div class="card">
+        <div class="form-group">
+          <label>ID Application</label>
+          <input type="text" id="idApp" placeholder="APP-..." />
+        </div>
+
+        <div class="form-group">
+          <label>Nom du Contact Tree</label>
+          <input type="text" id="nomTree" />
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; gap: 10px">
+            <div style="flex: 1.2">
+              <label>Tel Tree</label>
+              <input type="tel" id="telTree" />
+            </div>
+            <div style="flex: 1">
+              <label>Liaison</label>
+              <input type="text" id="liaison" placeholder="Père..." />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Département / Classe</label>
+          <input type="text" id="departement" />
+        </div>
       </div>
     </div>
 
-    <h2>🌳 Détails Tree (Parrainage)</h2>
-    <div class="card">
-      <div class="form-group">
-        <label>ID Application</label>
-        <input type="text" id="idApp" />
-      </div>
-      <div class="form-group">
-        <label>Nom Tree (Contact)</label>
-        <input type="text" id="nomTree" />
-      </div>
-      <div class="form-group">
-        <label>Numéro Tel Tree</label>
-        <input type="tel" id="telTree" />
-      </div>
-      <div class="form-group">
-        <label>Liaison (Père, Mère, Ami...)</label>
-        <input type="text" id="liaison" />
-      </div>
-      <div class="form-group">
-        <label>Département / Classe</label>
-        <input type="text" id="departement" />
-      </div>
+    <div class="fab-container">
+      <button class="btn-main" id="main-btn" onclick="submitForm()">
+        <div class="spinner" id="spinner"></div>
+        <span id="btn-text">Enregistrer le dossier</span>
+      </button>
     </div>
-
-    <div class="spacer"></div>
-
-    <button id="main-btn" onclick="submitForm()">ENREGISTRER LE DOSSIER</button>
 
     <script>
       const tg = window.Telegram.WebApp;
-      tg.expand(); // Plein écran
+      tg.expand();
+      // Indique à Telegram que l'app est prête et gère ses couleurs
+      tg.ready();
 
-      // Gestion jolie des boutons radio
-      function selectOption(value) {
+      // Fonction pour gérer le Switch (Segmented Control)
+      function selectOption(value, index) {
+        // Haptic feedback (petite vibration sympa)
+        if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
+
+        // Logique visuelle
         document.getElementById("optionSelected").value = value;
-        document
-          .querySelectorAll(".radio-label")
-          .forEach((el) => el.classList.remove("selected"));
-        event.currentTarget.classList.add("selected");
+        const options = document.querySelectorAll(".segment-option");
+        options.forEach((opt) => opt.classList.remove("active"));
+        options[index].classList.add("active");
+
+        // Animation du fond blanc
+        const bg = document.getElementById("segment-bg");
+        bg.style.transform = `translateX(${index * 100}%)`;
+      }
+
+      function clearError(id) {
+        document.getElementById(id).classList.remove("error");
       }
 
       async function submitForm() {
-        // 1. Récupération des données
+        // Feedback vibration
+        if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred("light");
+
+        const nom = document.getElementById("nomComplet").value;
+        const option = document.getElementById("optionSelected").value;
+
+        // Validation simple
+        if (!nom) {
+          if (tg.HapticFeedback)
+            tg.HapticFeedback.notificationOccurred("error");
+          document.getElementById("grp-nom").classList.add("error");
+          // Petit shake effect ou focus
+          document.getElementById("nomComplet").focus();
+          tg.showAlert("Le nom est obligatoire !");
+          return;
+        }
+
+        // UI Loading
+        const btn = document.getElementById("main-btn");
+        const spinner = document.getElementById("spinner");
+        const btnText = document.getElementById("btn-text");
+
+        btn.disabled = true;
+        spinner.style.display = "block";
+        btnText.innerText = "Envoi...";
+
+        // Récupération des données
         const data = {
-          nomComplet: document.getElementById("nomComplet").value,
+          nomComplet: nom,
           telephone: document.getElementById("telephone").value,
           dateNaissance: document.getElementById("dateNaissance").value,
           adresse: document.getElementById("adresse").value,
           eglise: document.getElementById("eglise").value,
           profession: document.getElementById("profession").value,
-          option: document.getElementById("optionSelected").value,
-
+          option: option,
           idApp: document.getElementById("idApp").value,
           nomTree: document.getElementById("nomTree").value,
           telTree: document.getElementById("telTree").value,
@@ -224,32 +398,25 @@
           departement: document.getElementById("departement").value,
         };
 
-        // 2. Validation minimale
-        if (!data.nomComplet || !data.option) {
-          tg.showAlert("Veuillez remplir le Nom et choisir une Option.");
-          return;
-        }
-
-        // Changement texte bouton pour feedback
-        const btn = document.getElementById("main-btn");
-        btn.innerText = "Envoi en cours...";
-        btn.disabled = true;
-
         try {
-          // 3. Envoi au serveur (Backend)
           await fetch("/api/students", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
           });
 
-          // 4. Signal au Bot que c'est fini et fermeture
-          // On renvoie juste le nom pour que le bot confirme la réception
+          // Succès vibration
+          if (tg.HapticFeedback)
+            tg.HapticFeedback.notificationOccurred("success");
+
+          // Fermeture
           tg.sendData(data.nomComplet);
         } catch (error) {
-          tg.showAlert("Erreur réseau : " + error.message);
-          btn.innerText = "RÉESSAYER";
+          // Erreur UI
           btn.disabled = false;
+          spinner.style.display = "none";
+          btnText.innerText = "Réessayer";
+          tg.showAlert("Erreur connexion : " + error.message);
         }
       }
     </script>
