@@ -1,24 +1,21 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const { Telegraf, Markup } = require("telegraf"); // Plus besoin de Scenes ni Session !
+const { Telegraf, Markup } = require("telegraf");
 const axios = require("axios");
-const path = require("path"); // Pour gérer les chemins de fichiers
+const path = require("path");
 require("dotenv").config();
 
 // --- CONFIGURATION ---
 const app = express();
 const PORT = process.env.PORT || 3000;
 const BOT_TOKEN = process.env.BOT_TOKEN;
-// L'URL publique de ton site Render (Render te la donne, ex: https://mon-bot.onrender.com)
-// ⚠️ IMPORTANT : Render mettra ça automatiquement dans la variable RENDER_EXTERNAL_URL
 const WEB_APP_URL =
   process.env.RENDER_EXTERNAL_URL || `https://ton-projet.onrender.com`;
 const URL_API_INTERNE = `http://localhost:${PORT}/api/students`;
 
 app.use(cors());
 app.use(bodyParser.json());
-// On dit au serveur de servir les fichiers du dossier "public" (notre HTML)
 app.use(express.static(path.join(__dirname, "public")));
 
 // --- BASE DE DONNÉES SIMULÉE ---
@@ -82,29 +79,25 @@ if (BOT_TOKEN) {
   };
 
   // -- MENU PRINCIPAL AVEC BOUTON MINI APP --
-  // Note le bouton spécial : .webApp('Texte', 'URL')
   const mainMenu = (url) =>
     Markup.keyboard([
-      [Markup.button.webApp("📝 Ouvrir le Formulaire", url)],
+      [Markup.button.webApp("Ouvrir le Formulaire", url)],
       ["🔍 Rechercher", "❓ Aide"],
     ]).resize();
 
   bot.start((ctx) => {
-    // On envoie le clavier qui contient l'URL vers notre fichier index.html
     ctx.reply(
-      "👋 Bienvenue ! Cliquez sur le bouton ci-dessous pour remplir le formulaire.",
+      "Bienvenue ! Cliquez sur le bouton ci-dessous pour remplir le formulaire.",
       mainMenu(WEB_APP_URL),
     );
   });
 
   // -- RÉCEPTION DES DONNÉES DE LA MINI APP --
-  // C'est ici que la magie opère. Quand l'utilisateur clique sur "ENREGISTRER" dans le HTML.
   bot.on("web_app_data", async (ctx) => {
-    const data = JSON.parse(ctx.webAppData.data); // On récupère le JSON du formulaire
+    const data = JSON.parse(ctx.webAppData.data);
 
     ctx.reply("⏳ Réception des données...");
 
-    // On sauvegarde via l'API
     const saved = await apiService.add(data);
 
     if (saved) {
@@ -119,7 +112,7 @@ if (BOT_TOKEN) {
     }
   });
 
-  // -- RECHERCHE & SUPPRESSION (Reste inchangé) --
+  // -- RECHERCHE & SUPPRESSION --
   bot.hears("🔍 Rechercher", (ctx) => ctx.reply("Entrez le nom : /search Nom"));
 
   bot.command("search", async (ctx) => {
