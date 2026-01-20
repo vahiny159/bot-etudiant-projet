@@ -54,6 +54,8 @@ Créez un fichier .env à la racine et ajoutez-y votre token :
 
 Actuellement, le serveur stocke les données dans une variable temporaire (students array) dans index.js.
 
+Note aux devs Backend : Vous devez implémenter la vérification du header X-Telegram-Data avant d'accepter une requête. Si la signature est invalide, renvoyez une erreur 403.
+
 #### Endpoint d'Inscription
 Le Frontend envoie une requête POST lorsque l'utilisateur clique sur "Enregistrer".
 
@@ -62,6 +64,7 @@ Le Frontend envoie une requête POST lorsque l'utilisateur clique sur "Enregistr
 - Méthode : POST
 
 - Content-Type : application/json
+- 
 
 #### Format des données reçues (Payload JSON) :
 
@@ -94,6 +97,32 @@ Si l'insertion en BDD réussit, renvoyez simplement :
 }
 ```
 
+#### Exemple de Logique de Validation (Node.js) :
+```JS
+const crypto = require('crypto');
+
+function verifyTelegramData(initData) {
+    const urlParams = new URLSearchParams(initData);
+    const hash = urlParams.get('hash');
+    urlParams.delete('hash');
+
+    // 1. Trier les clés alphabétiquement
+    const dataCheckString = Array.from(urlParams.entries())
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([key, val]) => `${key}=${val}`)
+        .join('\n');
+
+    // 2. Créer la clé secrète (HMAC-SHA256 du Token Bot)
+    const secretKey = crypto.createHmac('sha256', 'WebAppData').update(process.env.BOT_TOKEN).digest();
+    
+    // 3. Calculer le hash attendu
+    const calculatedHash = crypto.createHmac('sha256', secretKey).update(dataCheckString).digest('hex');
+
+    // 4. Comparer
+    return calculatedHash === hash;
+}
+```
+
 ## 📝 TODO List (Reste à faire)
 - [x] Frontend : Interface UI/UX terminée (Thème Yellow, Animations, Validation).
 
@@ -101,8 +130,9 @@ Si l'insertion en BDD réussit, renvoyez simplement :
 
 - [x] API : Route /api/students créée et testée (mockup).
 
+- [x] Sécurité : Ajouter une authentification ou validation des données côté serveur.
+
 - [ ] Backend : Remplacer le stockage mémoire par la connexion Base de Données (MySQL/Mongo/Postgres).
 
-- [ ] Sécurité : Ajouter une authentification ou validation des données côté serveur.
 
 
