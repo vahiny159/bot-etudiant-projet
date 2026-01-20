@@ -87,7 +87,7 @@ if (BOT_TOKEN) {
   // Menu simple
   bot.start((ctx) => {
     ctx.reply(
-      "👋 **Gestion des Élèves**\nCliquez ci-dessous pour ouvrir l'application complète.",
+      "**Gestion Fruits**\nCliquez ci-dessous pour ouvrir l'application complète.",
       Markup.keyboard([
         [Markup.button.webApp("📱 Ouvrir le Tableau de Bord", WEB_APP_URL)],
       ]).resize(),
