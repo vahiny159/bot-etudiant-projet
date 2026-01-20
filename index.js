@@ -96,4 +96,26 @@ if (BOT_TOKEN) {
   process.once("SIGTERM", () => bot.stop("SIGTERM"));
 }
 
+// --- CHECK DOUBLONS ---
+app.post("/api/check-duplicates", (req, res) => {
+  // const telegramProof = req.header('X-Telegram-Data');
+  // if (!verifyTelegramData(telegramProof)) return res.status(403).json({ success: false });
+
+  const { nomComplet, telephone } = req.body;
+
+  // On cherche si un étudiant existant a le même tel OU un nom qui contient le mot clé
+  const found = students.filter(
+    (s) =>
+      (telephone && s.telephone === telephone) ||
+      (nomComplet &&
+        s.nomComplet.toLowerCase().includes(nomComplet.toLowerCase())),
+  );
+
+  if (found.length > 0) {
+    res.json({ found: true, candidates: found });
+  } else {
+    res.json({ found: false });
+  }
+});
+
 app.listen(PORT, () => console.log(`🚀 Serveur Sécurisé sur le port ${PORT}`));

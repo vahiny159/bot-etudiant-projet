@@ -6,14 +6,13 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Inscription Yellow</title>
+    <title>Inscription MGC</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <script>
       tailwind.config = {
-        // désactive le mode sombre auto pour éviter bugs contraste sur le texte des input
         darkMode: "class",
         theme: {
           extend: {
@@ -55,20 +54,17 @@
       body {
         -webkit-tap-highlight-color: transparent;
       }
-
       .input-glass {
         background: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(10px);
         transition: all 0.3s ease;
       }
-
       .input-glass:focus {
         background: #ffffff;
         transform: translateY(-2px);
         box-shadow: 0 10px 25px rgba(250, 204, 21, 0.25);
         border-color: #facc15;
       }
-
       ::-webkit-scrollbar {
         width: 0px;
         background: transparent;
@@ -126,7 +122,7 @@
                 <input
                   type="text"
                   id="nomComplet"
-                  placeholder="Ex: Rakoto Paul Bert"
+                  placeholder="Ex: Jack So"
                   class="input-glass w-full border border-gray-200 rounded-xl px-4 py-3.5 outline-none font-semibold placeholder-gray-400 text-gray-900"
                   oninput="clearError()"
                 />
@@ -151,6 +147,42 @@
                   <input
                     type="date"
                     id="dateNaissance"
+                    class="input-glass w-full border border-gray-200 rounded-xl px-4 py-3.5 outline-none font-medium text-gray-900"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-gray-500 mb-1 ml-1"
+                  >ADRESSE / VILLE</label
+                >
+                <input
+                  type="text"
+                  id="adresse"
+                  placeholder="Analakely..."
+                  class="input-glass w-full border border-gray-200 rounded-xl px-4 py-3.5 outline-none font-medium text-gray-900"
+                />
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-gray-500 mb-1 ml-1"
+                    >ÉGLISE</label
+                  >
+                  <input
+                    type="text"
+                    id="eglise"
+                    placeholder="Katolika..."
+                    class="input-glass w-full border border-gray-200 rounded-xl px-4 py-3.5 outline-none font-medium text-gray-900"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gray-500 mb-1 ml-1"
+                    >Profession</label
+                  >
+                  <input
+                    type="text"
+                    id="profession"
                     class="input-glass w-full border border-gray-200 rounded-xl px-4 py-3.5 outline-none font-medium text-gray-900"
                   />
                 </div>
@@ -184,41 +216,14 @@
                 </div>
                 <input type="hidden" id="optionSelected" value="Journalier" />
               </div>
-
-              <div class="pt-2">
-                <label class="block text-xs font-bold text-gray-500 mb-1 ml-1"
-                  >ADRESSE / VILLE</label
-                >
-                <input
-                  type="text"
-                  id="adresse"
-                  placeholder="Analakely..."
-                  class="input-glass w-full border border-gray-200 rounded-xl px-4 py-3.5 outline-none font-medium text-gray-900"
-                />
-              </div>
-
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-xs font-bold text-gray-500 mb-1 ml-1"
-                    >ÉGLISE</label
-                  >
-                  <input
-                    type="text"
-                    id="eglise"
-                    class="input-glass w-full border border-gray-200 rounded-xl px-4 py-3.5 outline-none font-medium text-gray-900"
-                  />
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-gray-500 mb-1 ml-1"
-                    >JOB</label
-                  >
-                  <input
-                    type="text"
-                    id="profession"
-                    class="input-glass w-full border border-gray-200 rounded-xl px-4 py-3.5 outline-none font-medium text-gray-900"
-                  />
-                </div>
-              </div>
+              <button
+                type="button"
+                onclick="checkDuplicates()"
+                id="btn-check"
+                class="w-full flex justify-center items-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 bg-yellow-50 text-yellow-800 border border-yellow-200 hover:bg-yellow-100 hover:border-yellow-300"
+              >
+                <span id="check-text">Check doublons</span>
+              </button>
             </div>
           </div>
         </div>
@@ -236,9 +241,8 @@
             <div
               class="flex items-center mb-4 text-xs font-bold uppercase tracking-wider text-yellow-600"
             >
-              <span class="text-lg mr-2">🌳</span> Tree / Parrainage
+              <span class="text-lg mr-2">🌳</span> Tree
             </div>
-
             <div class="space-y-4">
               <div>
                 <label class="block text-xs font-bold text-gray-500 mb-1 ml-1"
@@ -301,7 +305,7 @@
     </div>
 
     <div
-      class="fixed bottom-0 left-0 right-0 p-4 pt-12 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent z-50"
+      class="fixed bottom-0 left-0 right-0 p-4 pt-12 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent z-40"
     >
       <button
         id="main-btn"
@@ -311,7 +315,6 @@
         <div
           class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-shimmer group-hover:animate-none"
         ></div>
-
         <div class="relative flex justify-center items-center">
           <span
             id="spinner"
@@ -322,22 +325,137 @@
       </button>
     </div>
 
+    <!-- POP UP CHECK DOUBLON -->
+    <div
+      id="duplicate-modal"
+      class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300"
+    >
+      <div
+        class="bg-white w-11/12 max-w-sm rounded-2xl p-6 shadow-2xl transform scale-95 transition-transform duration-300"
+        id="modal-content"
+      >
+        <div class="text-center mb-5">
+          <div
+            class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-orange-100 mb-4 text-2xl"
+          >
+            ⚠️
+          </div>
+          <h3 class="text-lg font-bold text-gray-900">Doublon détecté</h3>
+          <p class="text-sm text-gray-500 mt-2">
+            Nous avons trouvé des profils similaires. S'agit-il de cette
+            personne ?
+          </p>
+        </div>
+        <div
+          id="duplicate-list"
+          class="space-y-3 mb-6 max-h-48 overflow-y-auto pr-1"
+        ></div>
+        <div class="flex flex-col gap-3">
+          <button
+            onclick="closeModal()"
+            class="w-full py-3 bg-gray-100 text-gray-600 rounded-xl font-bold text-sm"
+          >
+            Fermer / Continuer l'inscription
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script>
       const tg = window.Telegram.WebApp;
       tg.expand();
       tg.ready();
       tg.setHeaderColor("#F9FAFB");
 
+      // --- FONCTION CHECK DOUBLON ---
+      async function checkDuplicates() {
+        const nom = document.getElementById("nomComplet").value;
+        const tel = document.getElementById("telephone").value;
+        const btnText = document.getElementById("check-text");
+        const btnIcon = document.getElementById("check-icon");
+
+        if (!nom) {
+          tg.showAlert("Veuillez entrer un nom d'abord.");
+          return;
+        }
+
+        // UI Loading
+        btnText.innerText = "Vérification...";
+        btnIcon.innerText = "⏳";
+
+        try {
+          // On appelle le nouveau endpoint du serveur
+          const res = await fetch("/api/check-duplicates", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Telegram-Data": tg.initData,
+            },
+            body: JSON.stringify({ nomComplet: nom, telephone: tel }),
+          });
+
+          const result = await res.json();
+
+          // Reset UI
+          btnText.innerText = "Vérifier s'il existe déjà";
+          btnIcon.innerText = "🔍";
+
+          if (result.found && result.candidates.length > 0) {
+            // Doublon trouvé !
+            if (tg.HapticFeedback)
+              tg.HapticFeedback.notificationOccurred("warning");
+            showDuplicateModal(result.candidates);
+          } else {
+            // Pas de doublon
+            if (tg.HapticFeedback)
+              tg.HapticFeedback.notificationOccurred("success");
+            tg.showAlert("✅ Aucun doublon trouvé. Vous pouvez continuer.");
+          }
+        } catch (error) {
+          btnText.innerText = "Réessayer";
+          tg.showAlert("Erreur connexion");
+        }
+      }
+
+      // --- GESTION MODALE ---
+      function showDuplicateModal(candidates) {
+        const modal = document.getElementById("duplicate-modal");
+        const list = document.getElementById("duplicate-list");
+        const content = document.getElementById("modal-content");
+
+        list.innerHTML = "";
+        candidates.forEach((s) => {
+          const item = document.createElement("div");
+          item.className =
+            "text-left p-3 rounded-xl bg-orange-50 border border-orange-100";
+          item.innerHTML = `
+                    <div class="font-bold text-gray-900">${s.nomComplet}</div>
+                    <div class="text-xs text-gray-500">Tel: ${s.telephone || "N/A"}</div>
+                `;
+          list.appendChild(item);
+        });
+
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          modal.classList.remove("opacity-0");
+          content.classList.remove("scale-95");
+          content.classList.add("scale-100");
+        }, 10);
+      }
+
+      function closeModal() {
+        const modal = document.getElementById("duplicate-modal");
+        modal.classList.add("opacity-0");
+        setTimeout(() => modal.classList.add("hidden"), 300);
+      }
+
       function selectOption(value, index) {
         if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
         document.getElementById("optionSelected").value = value;
-
         document.getElementById("capsule-bg").style.transform =
           `translateX(${index * 100}%)`;
-
         const btn0 = document.getElementById("btn-0");
         const btn1 = document.getElementById("btn-1");
-
         if (index === 0) {
           btn0.className =
             "flex-1 py-3 text-sm font-bold z-10 text-yellow-900 transition-colors";
@@ -358,68 +476,43 @@
       }
 
       function triggerConfetti() {
-        var duration = 3 * 1000;
-        var animationEnd = Date.now() + duration;
+        var duration = 3000;
+        var end = Date.now() + duration;
         var colors = ["#facc15", "#fde047", "#ffffff", "#000000"];
-        var defaults = {
-          startVelocity: 30,
-          spread: 360,
-          ticks: 60,
-          zIndex: 999,
-          colors: colors,
-        };
-
-        function randomInRange(min, max) {
-          return Math.random() * (max - min) + min;
-        }
-
-        var interval = setInterval(function () {
-          var timeLeft = animationEnd - Date.now();
-          if (timeLeft <= 0) return clearInterval(interval);
-          var particleCount = 50 * (timeLeft / duration);
-          confetti(
-            Object.assign({}, defaults, {
-              particleCount,
-              origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-            }),
-          );
-          confetti(
-            Object.assign({}, defaults, {
-              particleCount,
-              origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-            }),
-          );
-        }, 250);
+        (function frame() {
+          confetti({
+            particleCount: 5,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors: colors,
+          });
+          confetti({
+            particleCount: 5,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors: colors,
+          });
+          if (Date.now() < end) requestAnimationFrame(frame);
+        })();
       }
 
       async function submitForm() {
         if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred("medium");
-
         const nomInput = document.getElementById("nomComplet");
         const nom = nomInput.value;
-
         if (!nom) {
           if (tg.HapticFeedback)
             tg.HapticFeedback.notificationOccurred("error");
           nomInput.classList.remove("border-gray-200");
           nomInput.classList.add("border-red-500", "bg-red-50");
           nomInput.focus();
-          nomInput.animate(
-            [
-              { transform: "translateX(0)" },
-              { transform: "translateX(-10px)" },
-              { transform: "translateX(10px)" },
-              { transform: "translateX(0)" },
-            ],
-            { duration: 300 },
-          );
           return;
         }
-
         const btn = document.getElementById("main-btn");
         const spinner = document.getElementById("spinner");
         const btnText = document.getElementById("btn-text");
-
         btn.disabled = true;
         spinner.classList.remove("hidden");
         btnText.innerText = "Enregistrement...";
@@ -444,12 +537,10 @@
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              // AJOUT ICI : On envoie la carte d'identité numérique donnée par Telegram
               "X-Telegram-Data": tg.initData,
             },
             body: JSON.stringify(data),
           });
-
           if (tg.HapticFeedback)
             tg.HapticFeedback.notificationOccurred("success");
           btnText.innerText = "Succès !";
@@ -460,9 +551,7 @@
           );
           btn.classList.add("bg-green-500", "text-white");
           spinner.classList.replace("border-gray-900", "border-white");
-
           triggerConfetti();
-
           setTimeout(() => {
             tg.sendData(data.nomComplet);
           }, 2000);
