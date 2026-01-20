@@ -8,7 +8,6 @@
     />
     <title>Inscription</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
@@ -16,10 +15,9 @@
         theme: {
           extend: {
             colors: {
-              // On mappe les variables Telegram vers des noms Tailwind
               tg: {
-                bg: "var(--tg-theme-secondary-bg-color, #f5f5f7)", // Fond gris app
-                card: "var(--tg-theme-bg-color, #ffffff)", // Fond blanc cartes
+                bg: "var(--tg-theme-secondary-bg-color, #f5f5f7)",
+                card: "var(--tg-theme-bg-color, #ffffff)",
                 text: "var(--tg-theme-text-color, #000000)",
                 hint: "var(--tg-theme-hint-color, #8e8e93)",
                 btn: "var(--tg-theme-button-color, #3390ec)",
@@ -44,17 +42,13 @@
     </script>
 
     <style>
-      /* Petits ajustements spécifiques non gérés par Tailwind */
       body {
         -webkit-tap-highlight-color: transparent;
       }
-
-      /* Animation du switch */
       .slide-bg {
         transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
       }
 
-      /* Spinner */
       .spinner {
         border-top-color: transparent;
         -webkit-animation: spin 1s linear infinite;
@@ -68,214 +62,238 @@
           transform: rotate(360deg);
         }
       }
+
+      /* --- LE FOND À MOTIFS (DOODLE) --- */
+      .bg-doodle {
+        /* Motif SVG encodé (Formes géométriques simples) */
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      }
+
+      /* En mode sombre, on réduit un peu l'opacité du motif pour que ce soit subtil */
+      @media (prefers-color-scheme: dark) {
+        .bg-doodle {
+          opacity: 0.05;
+        }
+      }
     </style>
   </head>
-  <body class="bg-tg-bg text-tg-text antialiased pb-32">
-    <header class="pt-6 pb-2 text-center px-4">
-      <h1 class="text-xl font-bold tracking-tight">Nouveau Dossier</h1>
-      <p class="text-sm text-tg-hint mt-1">
-        Remplissez les informations ci-dessous
-      </p>
-    </header>
-
-    <div class="p-4 max-w-lg mx-auto space-y-6">
-      <div>
-        <div
-          class="flex items-center mb-3 ml-1 text-xs font-semibold uppercase tracking-wide text-tg-hint"
-        >
-          <span class="text-base mr-2">👤</span> Détails de l'élève
-        </div>
-
-        <div
-          class="bg-tg-card rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] space-y-4"
-        >
-          <div class="relative group" id="grp-nom">
-            <label class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
-              >Nom Complet *</label
-            >
-            <input
-              type="text"
-              id="nomComplet"
-              placeholder="Ex: Jean Rakoto"
-              class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all placeholder-gray-400"
-              oninput="clearError()"
-            />
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
-                >Téléphone</label
-              >
-              <input
-                type="tel"
-                id="telephone"
-                placeholder="034..."
-                class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
-              />
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
-                >Date Naissance</label
-              >
-              <input
-                type="date"
-                id="dateNaissance"
-                class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
-              >Adresse</label
-            >
-            <input
-              type="text"
-              id="adresse"
-              placeholder="Lot, Ville..."
-              class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
-            />
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
-                >Église</label
-              >
-              <input
-                type="text"
-                id="eglise"
-                class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
-              />
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
-                >Profession</label
-              >
-              <input
-                type="text"
-                id="profession"
-                class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-tg-hint mb-2 ml-1"
-              >Option d'apprentissage</label
-            >
-            <div class="relative flex bg-tg-bg p-1 rounded-xl">
-              <div
-                id="slide-bg"
-                class="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-tg-card rounded-lg shadow-sm slide-bg z-0"
-              ></div>
-
-              <button
-                onclick="selectOption('Journalier', 0)"
-                class="flex-1 py-2.5 text-sm font-semibold relative z-10 transition-colors duration-200 text-tg-text"
-                id="btn-0"
-              >
-                Journalier
-              </button>
-              <button
-                onclick="selectOption('Weekend', 1)"
-                class="flex-1 py-2.5 text-sm font-semibold relative z-10 text-tg-hint transition-colors duration-200"
-                id="btn-1"
-              >
-                Weekend
-              </button>
-            </div>
-            <input type="hidden" id="optionSelected" value="Journalier" />
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div
-          class="flex items-center mb-3 ml-1 text-xs font-semibold uppercase tracking-wide text-tg-hint"
-        >
-          <span class="text-base mr-2">🌳</span> Détails Tree
-        </div>
-
-        <div
-          class="bg-tg-card rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] space-y-4"
-        >
-          <div>
-            <label class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
-              >ID Application</label
-            >
-            <input
-              type="text"
-              id="idApp"
-              placeholder="APP-..."
-              class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
-            />
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
-              >Nom Contact Tree</label
-            >
-            <input
-              type="text"
-              id="nomTree"
-              class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
-            />
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
-                >Tel Tree</label
-              >
-              <input
-                type="tel"
-                id="telTree"
-                class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
-              />
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
-                >Liaison</label
-              >
-              <input
-                type="text"
-                id="liaison"
-                placeholder="Père..."
-                class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
-              >Département / Classe</label
-            >
-            <input
-              type="text"
-              id="departement"
-              class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-
+  <body class="bg-tg-bg text-tg-text antialiased pb-32 relative">
     <div
-      class="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-tg-bg to-transparent pt-10 z-50"
-    >
-      <button
-        id="main-btn"
-        onclick="submitForm()"
-        class="w-full bg-tg-btn text-tg-btn-text font-bold text-lg py-4 rounded-2xl shadow-lg shadow-blue-500/30 active:scale-[0.98] transition-all flex justify-center items-center"
+      class="fixed inset-0 z-0 bg-doodle pointer-events-none opacity-40"
+    ></div>
+
+    <div class="relative z-10">
+      <header class="pt-6 pb-2 text-center px-4">
+        <h1 class="text-xl font-bold tracking-tight">Nouveau Dossier</h1>
+        <p class="text-sm text-tg-hint mt-1">
+          Remplissez les informations ci-dessous
+        </p>
+      </header>
+
+      <div class="p-4 max-w-lg mx-auto space-y-6">
+        <div>
+          <div
+            class="flex items-center mb-3 ml-1 text-xs font-semibold uppercase tracking-wide text-tg-hint"
+          >
+            <span class="text-base mr-2">👤</span> Détails de l'élève
+          </div>
+
+          <div
+            class="bg-tg-card/90 backdrop-blur-sm rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] space-y-4"
+          >
+            <div class="relative group" id="grp-nom">
+              <label class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
+                >Nom Complet *</label
+              >
+              <input
+                type="text"
+                id="nomComplet"
+                placeholder="Ex: Jean Rakoto"
+                class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none focus:ring-4 focus:ring-blue-500/10 transition-all placeholder-gray-400"
+                oninput="clearError()"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
+                  >Téléphone</label
+                >
+                <input
+                  type="tel"
+                  id="telephone"
+                  placeholder="034..."
+                  class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label
+                  class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
+                  >Date Naissance</label
+                >
+                <input
+                  type="date"
+                  id="dateNaissance"
+                  class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
+                >Adresse</label
+              >
+              <input
+                type="text"
+                id="adresse"
+                placeholder="Lot, Ville..."
+                class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
+                  >Église</label
+                >
+                <input
+                  type="text"
+                  id="eglise"
+                  class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label
+                  class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
+                  >Profession</label
+                >
+                <input
+                  type="text"
+                  id="profession"
+                  class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-tg-hint mb-2 ml-1"
+                >Option d'apprentissage</label
+              >
+              <div class="relative flex bg-tg-bg p-1 rounded-xl">
+                <div
+                  id="slide-bg"
+                  class="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-tg-card rounded-lg shadow-sm slide-bg z-0"
+                ></div>
+                <button
+                  onclick="selectOption('Journalier', 0)"
+                  class="flex-1 py-2.5 text-sm font-semibold relative z-10 transition-colors duration-200 text-tg-text"
+                  id="btn-0"
+                >
+                  Journalier
+                </button>
+                <button
+                  onclick="selectOption('Weekend', 1)"
+                  class="flex-1 py-2.5 text-sm font-semibold relative z-10 text-tg-hint transition-colors duration-200"
+                  id="btn-1"
+                >
+                  Weekend
+                </button>
+              </div>
+              <input type="hidden" id="optionSelected" value="Journalier" />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div
+            class="flex items-center mb-3 ml-1 text-xs font-semibold uppercase tracking-wide text-tg-hint"
+          >
+            <span class="text-base mr-2">🌳</span> Détails Tree
+          </div>
+
+          <div
+            class="bg-tg-card/90 backdrop-blur-sm rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] space-y-4"
+          >
+            <div>
+              <label class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
+                >ID Application</label
+              >
+              <input
+                type="text"
+                id="idApp"
+                placeholder="APP-..."
+                class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
+                >Nom Contact Tree</label
+              >
+              <input
+                type="text"
+                id="nomTree"
+                class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
+                  >Tel Tree</label
+                >
+                <input
+                  type="tel"
+                  id="telTree"
+                  class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label
+                  class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
+                  >Liaison</label
+                >
+                <input
+                  type="text"
+                  id="liaison"
+                  placeholder="Père..."
+                  class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-tg-hint mb-1.5 ml-1"
+                >Département / Classe</label
+              >
+              <input
+                type="text"
+                id="departement"
+                class="w-full bg-tg-bg text-tg-text p-3.5 rounded-xl border border-transparent focus:border-tg-btn focus:bg-tg-card focus:outline-none transition-all"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-tg-bg to-transparent pt-10 z-50"
       >
-        <div
-          id="spinner"
-          class="spinner border-2 border-white w-5 h-5 rounded-full mr-3 hidden"
-        ></div>
-        <span id="btn-text">Enregistrer le dossier</span>
-      </button>
+        <button
+          id="main-btn"
+          onclick="submitForm()"
+          class="w-full bg-tg-btn text-tg-btn-text font-bold text-lg py-4 rounded-2xl shadow-lg shadow-blue-500/30 active:scale-[0.98] transition-all flex justify-center items-center"
+        >
+          <div
+            id="spinner"
+            class="spinner border-2 border-white w-5 h-5 rounded-full mr-3 hidden"
+          ></div>
+          <span id="btn-text">Enregistrer le dossier</span>
+        </button>
+      </div>
     </div>
 
     <script>
@@ -283,20 +301,13 @@
       tg.expand();
       tg.ready();
 
-      // Gestion Option (Journalier/Weekend)
       function selectOption(value, index) {
         if (tg.HapticFeedback) tg.HapticFeedback.selectionChanged();
-
         document.getElementById("optionSelected").value = value;
-
-        // Animation Slider
         const bg = document.getElementById("slide-bg");
         bg.style.transform = `translateX(${index * 100}%)`;
-
-        // Couleurs Texte
         const btn0 = document.getElementById("btn-0");
         const btn1 = document.getElementById("btn-1");
-
         if (index === 0) {
           btn0.classList.replace("text-tg-hint", "text-tg-text");
           btn1.classList.replace("text-tg-text", "text-tg-hint");
@@ -318,21 +329,16 @@
         const nomInput = document.getElementById("nomComplet");
         const nom = nomInput.value;
 
-        // Validation Visuelle Tailwind
         if (!nom) {
           if (tg.HapticFeedback)
             tg.HapticFeedback.notificationOccurred("error");
-
-          // On applique les classes d'erreur sur Tailwind
           nomInput.classList.remove("border-transparent", "bg-tg-bg");
           nomInput.classList.add("border-red-500", "bg-red-50", "text-red-900");
           nomInput.focus();
-
           tg.showAlert("Le nom est obligatoire !");
           return;
         }
 
-        // UI Loading
         const btn = document.getElementById("main-btn");
         const spinner = document.getElementById("spinner");
         const btnText = document.getElementById("btn-text");
