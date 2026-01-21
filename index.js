@@ -140,15 +140,32 @@ if (BOT_TOKEN) {
     );
   });
 
-  //on écoute "web_app_data"
-  bot.on("web_app_data", (ctx) => {
-    const data = ctx.message.web_app_data.data;
-    ctx.reply(`✅ Dossier reçu pour : ${data} !`);
+  bot.on("message", async (ctx) => {
+    console.log("📩 Message Bot Reçu :", ctx.message);
+
+    if (ctx.message.web_app_data) {
+      const data = ctx.message.web_app_data.data;
+      console.log("💾 Donnée WebApp détectée :", data);
+
+      try {
+        await ctx.reply(`✅ Dossier bien reçu pour : ${data} !`);
+
+        await ctx.reply(
+          "Voulez-vous en saisir un autre ?",
+          Markup.keyboard([
+            [Markup.button.webApp("📝 Nouveau Formulaire", WEB_APP_URL)],
+          ]).resize(),
+        );
+      } catch (err) {
+        console.error("Erreur d'envoi message bot:", err);
+      }
+    }
   });
 
-  bot.launch();
+  bot.launch().then(() => {
+    console.log("🤖 Le Bot est connecté et écoute !");
+  });
 
-  // Gestion arrêt propre
   process.once("SIGINT", () => bot.stop("SIGINT"));
   process.once("SIGTERM", () => bot.stop("SIGTERM"));
 }
