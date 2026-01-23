@@ -109,8 +109,11 @@
                   type="text"
                   id="nomComplet"
                   placeholder="Ex: Razafimahandry Vahiny"
-                  class="input-fast w-full border border-gray-200 rounded-xl px-4 py-3.5 font-semibold placeholder-gray-400 text-gray-900"
-                  oninput="clearError()"
+                  class="input-fast w-full border border-gray-200 rounded-xl px-4 py-3.5 font-semibold placeholder-gray-400 text-gray-900 uppercase"
+                  oninput="
+                    clearError();
+                    this.value = this.value.toUpperCase();
+                  "
                 />
               </div>
 
@@ -884,6 +887,22 @@
           tg.showAlert("Erreur : " + error.message);
         }
       }
+      // Formatage auto du num tel
+      document
+        .getElementById("telephone")
+        .addEventListener("input", function (e) {
+          let x = e.target.value
+            .replace(/\D/g, "")
+            .match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})/);
+
+          e.target.value = !x[2]
+            ? x[1]
+            : x[1] +
+              " " +
+              x[2] +
+              (x[3] ? " " + x[3] : "") +
+              (x[4] ? " " + x[4] : "");
+        });
     </script>
   </body>
 </html>
