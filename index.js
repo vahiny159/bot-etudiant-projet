@@ -7,9 +7,9 @@ const { Telegraf, Markup } = require("telegraf");
 const path = require("path");
 const crypto = require("crypto");
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const WEB_APP_URL = process.env.WEB_APP_URL;
+const WEB_APP_URL = process.env.WEB_APP_URL || process.env.RENDER_EXTERNAL_URL;
 
 // --- 3. VÉRIFICATION DE SÉCURITÉ ---
 if (!BOT_TOKEN) {
@@ -21,6 +21,12 @@ if (!BOT_TOKEN) {
 if (!WEB_APP_URL) {
   console.error(
     "❌ ERREUR FATALE : La variable 'WEB_APP_URL' manque dans le fichier .env",
+  );
+  process.exit(1);
+}
+if (!PORT) {
+  console.error(
+    "❌ ERREUR FATALE : La variable 'PORT' manque dans le fichier .env",
   );
   process.exit(1);
 }
