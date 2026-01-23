@@ -7,6 +7,13 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Inscription MGC</title>
+    <link rel="icon" type="image/svg+xml" href="icons/mgc.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -16,6 +23,9 @@
         darkMode: "class",
         theme: {
           extend: {
+            fontFamily: {
+              sans: ['"Plus Jakarta Sans"', "sans-serif"],
+            },
             colors: {
               lemon: {
                 300: "#fde047",
@@ -38,14 +48,15 @@
       }
 
       .input-fast {
-        background: #ffffff;
+        background: #f9fafb;
         transition:
           border-color 0.2s ease,
           box-shadow 0.2s ease;
       }
       .input-fast:focus {
+        background: #ffffff;
         border-color: #facc15;
-        box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.2);
+        box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.15);
         outline: none;
       }
 
@@ -73,10 +84,10 @@
     <div class="relative z-10 px-4 pt-6">
       <header class="text-center mb-8">
         <h1 class="text-3xl font-black tracking-tighter text-gray-900">
-          Inscription
+          Inscription MGC
         </h1>
         <p class="text-sm font-medium text-gray-500 mt-1">
-          Nouveau dossier fruit
+          Formulaire d'enregistrement
         </p>
       </header>
 
@@ -89,7 +100,7 @@
             class="relative bg-white rounded-2xl p-6 shadow-xl border border-yellow-400/20"
           >
             <div
-              class="flex items-center mb-4 text-xs font-bold uppercase tracking-wider text-yellow-600"
+              class="flex items-center mb-4 text-xs font-bold uppercase tracking-wider text-yellow-700"
             >
               <img
                 src="icons/fruit.svg"
@@ -174,7 +185,7 @@
                     <span>NAISSANCE</span>
                     <span
                       id="ageCalc"
-                      class="text-yellow-600 font-normal"
+                      class="text-sm text-yellow-600 font-normal"
                     ></span>
                   </label>
 
@@ -283,6 +294,12 @@
                 id="btn-check"
                 class="w-full flex justify-center items-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all active:scale-95 bg-yellow-50 text-yellow-800 border border-yellow-200 hover:bg-yellow-100 hover:border-yellow-300"
               >
+                <img
+                  src="icons/duplicate.svg"
+                  alt="Icone Duplicate"
+                  class="w-5 h-5 object-contain"
+                />
+
                 <span id="check-text">Check doublons</span>
               </button>
             </div>
@@ -373,7 +390,7 @@
       <button
         id="main-btn"
         onclick="submitForm()"
-        class="relative w-full bg-gradient-to-r from-lemon-400 to-lemon-500 text-gray-900 font-bold text-lg py-4 rounded-2xl shadow-lg shadow-yellow-400/40 active:scale-[0.98] transition-transform overflow-hidden group"
+        class="relative w-full bg-gradient-to-r from-lemon-400 to-lemon-500 text-gray-900 font-bold text-lg py-4 rounded-2xl shadow-lg shadow-xl shadow-black/5 active:scale-[0.98] transition-transform overflow-hidden group"
       >
         <div
           class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-shimmer group-hover:animate-none"
@@ -383,7 +400,15 @@
             id="spinner"
             class="animate-spin h-5 w-5 border-2 border-gray-900 border-t-transparent rounded-full mr-3 hidden"
           ></span>
-          <span id="btn-text">Enregistrer le dossier</span>
+
+          <span id="btn-text" class="flex items-center gap-2">
+            <img
+              src="icons/save.svg"
+              alt="Icone save"
+              class="w-8 h-8 object-contain"
+            />
+            <span>Enregistrer le dossier</span>
+          </span>
         </div>
       </button>
     </div>
@@ -905,11 +930,11 @@
 
           if (age < 0) {
             span.innerText = "Erreur date";
-            span.className = "text-red-500 font-bold";
+            span.className = "text-sm text-red-500 font-bold";
           } else {
             span.innerText = `${age} ans`;
             span.className =
-              "text-yellow-600 font-bold transition-all duration-500";
+              "text-sm text-yellow-600 font-bold transition-all duration-500";
           }
         });
     </script>
